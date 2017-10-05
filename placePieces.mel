@@ -1,0 +1,25 @@
+global proc placePieces(string $colour1, string $colour2){
+  //PLACE PAWNS
+  int $row;
+  int $col;
+  int $nameCounter = 0;
+  xform -cp pawn;		             //center the objects pivot
+  for($row = 0; $row < 2; $row++){
+    for($col = 0; $col < 8; $col++){
+      int $tileNum = ($row == 1) ? $col + 9 : $col + 49;
+      string $pawnName = "pawn_" + (++$nameCounter);
+      select "pawn";		          //select the pawn group
+      duplicate -name $pawnName;	//duplicate pawn group and make new name
+      string $tileName = "chess_tile_" + $tileNum;
+      float $tileTrans[] = getAttr($tileName + ".translate");
+      $tileTrans[1] = $tileTrans[1] + 1.0;
+      move -rpr $tileTrans[0] $tileTrans[1] $tileTrans[2] $pawnName;	//translate with respect to pivot
+      select $pawnName;
+      if($row == 1){
+        hyperShade -assign $colour1;
+      }else{
+        hyperShade -assign $colour2;
+      }
+    }
+  }
+}

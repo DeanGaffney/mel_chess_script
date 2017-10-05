@@ -1,0 +1,34 @@
+
+  if (`window -exists myWindow`) { deleteUI -window myWindow; }
+  window -rtf true -title "Chessboard Panel" myWindow;
+  //board settings
+  frameLayout -collapsable true -label "General Board Settings";
+  columnLayout;
+  string $boardShader1 = `shadingNode -asShader blinn -name "boardColour1"`;
+  string $boardShader2 = `shadingNode -asShader blinn -name "boardColour2"`;
+  string $piecesShader1 = `shadingNode -asShader blinn -name "piecesColour1"`;
+  string $piecesShader2 = `shadingNode -asShader blinn -name "piecesColour2"`;
+
+  floatSliderGrp -minValue 0.5 -maxValue 2 -fieldMinValue 0.5 -fieldMaxValue 2.0 -value 0.5 -label "Adjust Max Tile Height" -field true TileHeight;
+  attrColorSliderGrp -at ($boardShader1 + ".color") -label "Board Color 1";
+  attrColorSliderGrp -at ($boardShader2 + ".color") -label "Board Color 2";
+  button -c "createChessboard($boardShader1, $boardShader2)" -label "Create Chessboard";
+
+  //chess pieces settings
+  frameLayout -collapsable true -label "General Chess Pieces Settings";
+  columnLayout;
+  attrColorSliderGrp -at ($piecesShader1 + ".color") -label "Pieces Colour 1";
+  attrColorSliderGrp -at ($piecesShader2 + ".color")-label "Pieces Colour 2";
+  button -c "placePieces($piecesShader1, $piecesShader2)" -label "Place Pieces";
+
+  //reset option
+  columnLayout;
+  button -c "reset($boardShader1, $boardShader2)" -label "Reset Board";
+
+  showWindow myWindow;
+
+  global proc reset(string $colour1, string $colour2){
+    select "chess_tile_*";
+    delete;
+    createChessboard($colour1, $colour2);
+  }

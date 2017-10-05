@@ -1,0 +1,21 @@
+global proc createChessboard(string $colour1, string $colour2){
+  //CREATE CHESS BOARD AND NAME TILES
+  int $row;
+  int $col;
+  string $chessTileStr = "chess_tile_";		//name prefix
+  float $maxTileHeight = `floatSliderGrp -q -value "TileHeight"`;
+  for($row = 0; $row < 8; $row++){
+    for($col = 0; $col < 8; $col++){
+       int $tileNum = ($row + $col + 1);
+       float $randHeight = rand(0.5, $maxTileHeight);
+       string $name = $chessTileStr + $tileNum;   //add tile num to name
+       polyCube -w 1.0 -h 0.5 -d 1.0 -n $name;
+       move $row $randHeight $col;
+       if(($row + $col) % 2 != 0){
+         hyperShade -assign $colour1;
+       }else{
+         hyperShade -assign $colour2;
+       }
+    }
+  }
+}
