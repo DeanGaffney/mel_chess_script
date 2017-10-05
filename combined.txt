@@ -1,0 +1,66 @@
+{
+	//1. ui slider for adjusting columns i.e height on panels (translation attr not the scale attr),
+	// 	 this will allow me to move the y axis by half the cube size making it easier to position pieces
+	//2. see the chess ui image on moddle for a reference.
+	//3. dont need to adjust 'rows' on the chessboard
+	//4. change the way I am changing colours with setAtrr "lambert1.color" -type double 0 0 0 (rgb vals)
+	//5. make 3 seperate scripts for the appropriate commands and combine them into one script CombineUI.mel
+	// (see moodle)
+	//6. reset will delete all placed pieces and just have a black and white flat board
+	//7. rework creating chessboard logic to use instances (master white piece, master black piece).
+
+
+
+	//PLACE PIECES
+	global proc placePieces(){
+		placePawns();
+		placeSpecialPieces();
+	}
+
+	global proc placePawns(){
+		placePawnsWithColour("white");
+		placePawnsWithColour("black");
+	}
+
+	//PLACE PAWNS ON BOARD
+	global proc placePawnsWithColour(){
+		int $col;
+		xform -cp pawn;		//center the objects pivot
+		for($col = 0; $col < 8; $col++){
+			//white pawns
+			int $tileNum = ($colour == "white") ? $col + 9 : $col + 49;
+			string $pawnName = "pawn_" + $colour + "_" + ($col + 1);
+			select "pawn";		//select the pawn group
+			duplicate -name $pawnName;	//duplicate pawn group and make new name
+			string $tileName = "chess_tile_" + $tileNum;
+			float $tileTrans[] = getAttr($tileName + ".translate");
+			$tileTrans[1] = $tileTrans[1] + 0.5;
+			move -rpr $tileTrans[0] $tileTrans[1] $tileTrans[2] $pawnName;	//translate with respect to pivot
+		}
+	}
+
+	//PLACE SPECIAL PIECES ON BOARD
+	global proc placeSpecialPieces(){
+		int $row;
+		int $col;
+		for($row = 0; $row < 2; $row++){
+			for($col = 0; $col < 8; $col++){
+				if($row == 0){
+					//duplicate "specialPiece" -name "some-name";
+					//white specialPieces
+					//select $col + 1, place pawn here
+					//get height
+					//get translation
+					//place pawn at this position
+					//pos/translation got with :
+					//float $posX = getAttr("chess_tile_49.translateX");
+					//float $posZ = getAttr("chess_tile_49.translateX");
+					//float $height = getAttr("polyCube49.height");
+				}else {
+					//black special pieces
+					//select $col + 57, will give me the next pawn row, place pawn
+				}
+			}
+		}
+	}
+};
