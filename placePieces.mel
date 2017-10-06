@@ -2,7 +2,7 @@ global proc placePieces(string $colour1, string $colour2){
   placePawns($colour1, 9);  //9 is the starting tile for 1st players pawns
   placePawns($colour2, 49); //49 is the starting tile for other pawns
   placeSpecialPieces($colour1, 1, 0);    //start on first tile, order non reversed
-  placeSpecialPieces($colour2, 56, 0);
+  placeSpecialPieces($colour2, 56, 1);
 }
 
 /*
@@ -11,7 +11,7 @@ global proc placePieces(string $colour1, string $colour2){
 global proc placePawns(string $colour, int $startingTileNum){
   int $col;
   for($col = 0; $col < 8; $col++){
-    placeSinglePiece("pawn", $colour, $col + $startingTileNum);
+    placeSinglePiece("pawn", $colour, $col + $startingTileNum, 1.0);
   }
 }
 
@@ -26,14 +26,14 @@ global proc placeSpecialPieces(string $colour, int $startingTileNum, int $revers
     //do normal order
     int $i;
     for($i = 0; $i < size($order);$i++){
-      placeSinglePiece($order[$i], $colour, $i + $startingTileNum);
+      placeSinglePiece($order[$i], $colour, $i + $startingTileNum, 1.5);
     }
   }else{
     //reverse the order list for opposing side
     int $loopCounter;
     for($loopCounter = size($order) - 1; $loopCounter >= 0; $loopCounter--){
       int $tileNum = $startingTileNum + (8 - $loopCounter);
-      placeSinglePiece($order[$loopCounter], $colour, $tileNum);
+      placeSinglePiece($order[$loopCounter], $colour, $tileNum, 1.5);
       //select new piece and rotate by 180 degrees
       setAttr("piece_" + $tileNum + ".rotateY", 180);
     }
@@ -43,15 +43,14 @@ global proc placeSpecialPieces(string $colour, int $startingTileNum, int $revers
 /*
 * Creats a specific piece of a specific colour and places it on the correct tile
 */
-global proc placeSinglePiece(string $pieceType, string $colour, int $tileNumber){
+global proc placeSinglePiece(string $pieceType, string $colour, int $tileNumber, float $yOffset){
   xform -cp $pieceType;		    //center the objects pivot
   string $pieceName = "piece_" + $tileNumber;  //tiles and pieces will match numerically here
   select $pieceType;		          //select the pawn group
   duplicate -name $pieceName;	//duplicate pawn group and make new name
   string $tileName = "chess_tile_" + $tileNumber;
   float $tileTrans[] = getAttr($tileName + ".translate");
-  $tileTrans[1] = $tileTrans[1] + 1.0;
-  move -rpr $tileTrans[0] $tileTrans[1] $tileTrans[2] $pieceName;	//translate with respect to pivot
+  move -rpr $tileTrans[0] ($tileTrans[1] + $yOffset) $tileTrans[2] $pieceName;	//translate with respect to pivot
   select $pieceName;
   hyperShade -assign $colour;
 }
