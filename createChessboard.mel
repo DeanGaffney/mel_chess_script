@@ -9,8 +9,8 @@ global proc createChessboard(string $colour1, string $colour2){
        int $tileNum = ($row + $col + 1);
        float $randHeight = rand(0.5, $maxTileHeight);
        string $name = $chessTileStr + $tileNum;   //add tile num to name
-       polyCube -w 1.0 -h 0.5 -d 1.0 -n $name;
-       move $row $randHeight $col;
+       polyCube -w 1.5 -h 0.5 -d 1.5 -n $name;
+       move ($row * 1.5) $randHeight ($col * 1.5);
        if(($row + $col) % 2 != 0){
          hyperShade -assign $colour1;
        }else{

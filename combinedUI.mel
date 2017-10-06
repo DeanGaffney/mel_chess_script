@@ -1,3 +1,5 @@
+  source "createChessboard.mel";
+  source "placePieces.mel";
 
   if (`window -exists myWindow`) { deleteUI -window myWindow; }
   window -rtf true -title "Chessboard Panel" myWindow;
@@ -13,7 +15,7 @@
   attrColorSliderGrp -at ($boardShader1 + ".color") -label "Board Color 1";
   attrColorSliderGrp -at ($boardShader2 + ".color") -label "Board Color 2";
   button -c "createChessboard($boardShader1, $boardShader2)" -label "Create Chessboard";
-
+  button -c "reset($boardShader1, $boardShader2)" -label "Reset Board";
   //chess pieces settings
   frameLayout -collapsable true -label "General Chess Pieces Settings";
   columnLayout;
@@ -21,14 +23,12 @@
   attrColorSliderGrp -at ($piecesShader2 + ".color")-label "Pieces Colour 2";
   button -c "placePieces($piecesShader1, $piecesShader2)" -label "Place Pieces";
 
-  //reset option
-  columnLayout;
-  button -c "reset($boardShader1, $boardShader2)" -label "Reset Board";
-
   showWindow myWindow;
 
   global proc reset(string $colour1, string $colour2){
     select "chess_tile_*";
+    delete;
+    select "piece_*";
     delete;
     createChessboard($colour1, $colour2);
   }
