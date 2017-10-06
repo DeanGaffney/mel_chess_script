@@ -11,7 +11,7 @@ global proc placePieces(string $colour1, string $colour2){
 global proc placePawns(string $colour, int $startingTileNum){
   int $col;
   for($col = 0; $col < 8; $col++){
-    placeSinglePiece("pawn", $colour, $col + $startingTileNum, 1.0);
+    placeSinglePiece("pawn", $colour, $col + $startingTileNum);
   }
 }
 
@@ -26,14 +26,14 @@ global proc placeSpecialPieces(string $colour, int $startingTileNum, int $revers
     //do normal order
     int $i;
     for($i = 0; $i < size($order);$i++){
-      placeSinglePiece($order[$i], $colour, $i + $startingTileNum, 1.5);
+      placeSinglePiece($order[$i], $colour, $i + $startingTileNum);
     }
   }else{
     //reverse the order list for opposing side
     int $loopCounter;
     for($loopCounter = size($order) - 1; $loopCounter >= 0; $loopCounter--){
       int $tileNum = $startingTileNum + (8 - $loopCounter);
-      placeSinglePiece($order[$loopCounter], $colour, $tileNum, 1.5);
+      placeSinglePiece($order[$loopCounter], $colour, $tileNum);
       //select new piece and rotate by 180 degrees
       setAttr("piece_" + $tileNum + ".rotateY", 180);
     }
@@ -43,14 +43,38 @@ global proc placeSpecialPieces(string $colour, int $startingTileNum, int $revers
 /*
 * Creats a specific piece of a specific colour and places it on the correct tile
 */
-global proc placeSinglePiece(string $pieceType, string $colour, int $tileNumber, float $yOffset){
+global proc placeSinglePiece(string $pieceType, string $colour, int $tileNumber){
   xform -cp $pieceType;		    //center the objects pivot
   string $pieceName = "piece_" + $tileNumber;  //tiles and pieces will match numerically here
   select $pieceType;		          //select the pawn group
   duplicate -name $pieceName;	//duplicate pawn group and make new name
   string $tileName = "chess_tile_" + $tileNumber;
   float $tileTrans[] = getAttr($tileName + ".translate");
-  move -rpr $tileTrans[0] ($tileTrans[1] + $yOffset) $tileTrans[2] $pieceName;	//translate with respect to pivot
+  move -rpr $tileTrans[0] ($tileTrans[1] + getPieceYOffset($pieceType)) $tileTrans[2] $pieceName;	//translate with respect to pivot
   select $pieceName;
   hyperShade -assign $colour;
+}
+
+global proc float getPieceYOffset(string $pieceType){
+  float $yOffset;
+  switch($pieceType){
+    case "rook":
+        $yOffset = 1.2;
+        break;
+    case "pawn":
+        $yOffset = 1.0;
+        break;
+    case "king":
+        $yOffset = 1.7;
+        break;
+    case "queen":
+        $yOffset = 1.7;
+        break;
+    case "bishop":
+        $yOffset = 1.6;
+        break;
+    default:
+        $yOffset = 1.5;
+  }
+  return $yOffset;
 }
